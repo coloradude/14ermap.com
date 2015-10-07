@@ -1,0 +1,38 @@
+
+.img-wrapper
+  img(src=peak.thumbnail)
+  .peak-rank Rank: #{peak.rank}th
+h1 #{peak.name} &bull; #{peak.elevation.slice(0,2) + ',' + peak.elevation.slice(2)}ft
+#content
+  p Range: #{peak.range}
+  h2 Routes
+  .sexy-line
+  each route in routes
+    -var routeClass;
+    -if (route.difficulty.toLowerCase().indexOf('class 2') > -1){
+    -routeClass='class-2'
+    -} else if (route.difficulty.toLowerCase().indexOf('class 3') > -1){
+    -routeClass='class-3'
+    -} else if (route.difficulty.toLowerCase().indexOf('class 4') > -1){
+    -routeClass='class-4'
+    -} else if (route.difficulty.toLowerCase().indexOf('class 5') > -1){
+    -routeClass='class-5'
+    -} else { routeClass='routeClass-1'}
+    button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass) #{route.name} &bull; #{route.difficulty} 
+      span.glyphicon.glyphicon-star
+  h2 Trailheads
+  .sexy-line 
+  each trailhead in trailheads
+    button.btn.btn-primary.btn-block.feature-link(value='/trailhead/' + trailhead._id) #{trailhead.name} 
+  h2 Peak Conditions
+  .sexy-line
+  each report in peak.peakConditions
+    -var postDate = new Date(report.date.slice(0,4)+'/'+report.date.slice(5,7)+'/'+report.date.slice(8));
+    -var today = new Date();
+    -var timeDiff = Math.abs(today.getTime() - postDate.getTime());
+    -var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+    .panel.panel-primary
+      .panel-heading.text-left #{report.route} (#{report.user}) &bull; #{diffDays} days ago
+      .panel-body.text-left #{report.report}
+      
+        

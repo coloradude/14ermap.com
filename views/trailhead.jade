@@ -1,0 +1,37 @@
+.img-wrapper
+  img(src=trailhead.thumbnail)
+h1 #{trailhead.name}
+#content
+  p Directions: #{trailhead.directions}
+  p Road Information: #{trailhead.roadInfo}
+  p Difficulty: #{trailhead.difficulty}
+  p Winter Access: #{trailhead.winterAccess}
+  h2 Routes
+  .sexy-line
+  each route in routes
+    -var routeClass;
+    -if (route.difficulty.toLowerCase().indexOf('class 2') > -1){
+    -routeClass='class-2'
+    -} else if (route.difficulty.toLowerCase().indexOf('class 3') > -1){
+    -routeClass='class-3'
+    -} else if (route.difficulty.toLowerCase().indexOf('class 4') > -1){
+    -routeClass='class-4'
+    -} else if (route.difficulty.toLowerCase().indexOf('class 5') > -1){
+    -routeClass='class-5'
+    -} else { routeClass='routeClass-1'}
+    button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass) #{route.name} 
+  h2 Peaks
+  .sexy-line
+  each peak in peaks
+    button.btn.btn-primary.btn-block.feature-link(value='/peak/' + peak._id) #{peak.name}
+  h2 Trailhead Conditions
+  .sexy-line
+  -var i = 0
+  each report in trailhead.thConditions.slice(0,3)
+    -var postDate = new Date(report.date.slice(0,4)+'/'+report.date.slice(5,7)+'/'+report.date.slice(8));
+    -var today = new Date();
+    -var timeDiff = Math.abs(today.getTime() - postDate.getTime());
+    -var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+    .panel.panel-primary
+      .panel-heading.text-left #{report.user} &bull; #{diffDays} days ago
+      .panel-body.text-left #{report.report}

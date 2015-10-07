@@ -1,0 +1,17 @@
+.img-wrapper
+  img(src=route.thumbnail)
+h1 #{route.name}
+#content
+  p #{route.notes}
+  p Distance: #{route.distance} Miles
+  p Gain: #{route.gain}ft
+  p Difficulty: #{route.difficulty}
+  p Exposure: #{route.exposure}
+  a(href=route.routeGPX) GPX File
+  h2 Trailhead
+  .sexy-line 
+  button.btn.btn-primary.btn-block.feature-link(value='/trailhead/' + trailhead._id) #{trailhead.name} 
+  h2 Peaks
+  .sexy-line
+  each peak in peaks
+    button.btn.btn-primary.btn-block.feature-link(value='/peak/' + peak._id) #{peak.name}
