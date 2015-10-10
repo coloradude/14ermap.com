@@ -1,17 +1,23 @@
 .img-wrapper
   img(src=trailhead.thumbnail)
 h1 #{trailhead.name}
-#content
-  p Directions: #{trailhead.directions}
-  p Road Information: #{trailhead.roadInfo}
-  p Difficulty: #{trailhead.difficulty}
-  p Winter Access: #{trailhead.winterAccess}
+.content
+  .button-flex-row
+    button.btn.btn-success.download More Images 
+      span.glyphicon.glyphicon-picture
+    button.btn.btn-success.download Download .gpx file 
+      span.glyphicon.glyphicon-save
+  .well.well-lg
+    p Directions: #{trailhead.directions}
+    p Road Information: #{trailhead.roadInfo}
+    p Difficulty: #{trailhead.difficulty}
+    p Winter Access: #{trailhead.winterAccess}
   h2 Routes
   .sexy-line
   each route in routes
     -var routeClass;
     -if (route.difficulty.toLowerCase().indexOf('class 2') > -1){
-    -routeClass='class-2'
+    -routeClass='btn btn-success'
     -} else if (route.difficulty.toLowerCase().indexOf('class 3') > -1){
     -routeClass='class-3'
     -} else if (route.difficulty.toLowerCase().indexOf('class 4') > -1){
@@ -19,7 +25,8 @@ h1 #{trailhead.name}
     -} else if (route.difficulty.toLowerCase().indexOf('class 5') > -1){
     -routeClass='class-5'
     -} else { routeClass='routeClass-1'}
-    button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass) #{route.name} 
+    button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass) #{route.name} &bull; #{route.difficulty} 
+      span.glyphicon.glyphicon-star
   h2 Peaks
   .sexy-line
   each peak in peaks

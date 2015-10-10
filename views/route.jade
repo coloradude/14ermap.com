@@ -1,13 +1,18 @@
 .img-wrapper
   img(src=route.thumbnail)
 h1 #{route.name}
-#content
-  p #{route.notes}
-  p Distance: #{route.distance} Miles
-  p Gain: #{route.gain}ft
-  p Difficulty: #{route.difficulty}
-  p Exposure: #{route.exposure}
-  a(href=route.routeGPX) GPX File
+.content
+  .button-flex-row
+    button.btn.btn-success.download More Images 
+      span.glyphicon.glyphicon-picture
+    button.btn.btn-success.download Download .gpx file 
+      span.glyphicon.glyphicon-save
+  .well.well-lg
+    p #{route.notes}
+    p Distance: #{route.distance} Miles
+    p Gain: #{route.gain}ft
+    p Difficulty: #{route.difficulty}
+    p Exposure: #{route.exposure}
   h2 Trailhead
   .sexy-line 
   button.btn.btn-primary.btn-block.feature-link(value='/trailhead/' + trailhead._id) #{trailhead.name} 

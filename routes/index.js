@@ -6,27 +6,38 @@ var routes = db.get('routes')
 var trailheads = db.get('trailheads')
 var test = db.get('geoJSON-test')
 var fs = require('fs')
+var request = require('request')
 
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
-
+//'http://api.openweathermap.org/data/2.5/forecast?lat=' + peak.latitude + '&lon' + peak.longitude
 router.get('/peak/:id', function(req, res, next) {
+  console.log('got it')
   peaks.findOne({_id: req.params.id}, function(err, peak){
     if (err) throw err;
-    routes.find({peakKeys: peak.pkKey}, function(err, routes){
+    request('http://api.openweathermap.org/data/2.5/forecast?lat=' + peak.latitutde + '&lon=' + peak.longitude + '&cnt=5&APPID=9168266ea473f720024dc6501a3dec27', function (error, response, weather) {
       if (err) throw err;
-      trailheads.find({pkKeys: peak.pkKey}, function(err, trailheads){
-        if (err) throw err;
-        res.render('peak', {peak: peak, routes: routes, trailheads: trailheads}, function(err, html){
+      console.log(response)
+      if (!error && response.statusCode == 200) {
+        var weather = JSON.parse(weather)
+
+        console.log(weather.list)
+        routes.find({peakKeys: peak.pkKey}, function(err, routes){
           if (err) throw err;
-          res.send(html)
+          trailheads.find({pkKeys: peak.pkKey}, function(err, trailheads){
+            if (err) throw err;
+            res.render('peak', {peak: peak, routes: routes, trailheads: trailheads, weather: weather.list}, function(err, html){
+              if (err) throw err;
+              console.log(html)
+              res.send(html)
+            })
+          })
         })
-      })
+      }
     })
-    // res.send(peak[0])
   });
 });
 

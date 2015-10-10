@@ -1,5 +1,6 @@
 
 var $infoPane = $('#info-pane')
+var $weather = $('#weather')
 
 L.mapbox.accessToken ='pk.eyJ1IjoiY29sb3JhZHVkZSIsImEiOiJjaWY2NnN5MjAwYjVxc21rdTdzdWQwd2NtIn0.4_IhtN06SX3K3moZ1da-cg';
 
@@ -17,24 +18,16 @@ myLayer.on('mouseout', function(e) {
 
 myLayer.on('click', function(e){
   map.setView(e.latlng)
+  console.log(e.layer.feature.properties._id)
   $infoPane.toggleClass('slideInLeft');
   $.ajax({
     method: 'GET',
     url: '/' + e.layer.feature.properties.type + '/' + e.layer.feature.properties._id,
   }).done(function(data){
-
     $infoPane.html(data).addClass('slideInLeft');
     loadAJAX();
-    // $('.feature-link').on('click', function(){
-    //   $.ajax({
-    //     method: 'GET',
-    //     url: $(this).val(),
-    //   }).done(function(html){
-    //     $('#info-pane').html(html)
-    //     loadAJAX();
-    //   })
-    // })
   })
+  
 })
 
 function loadAJAX(){
