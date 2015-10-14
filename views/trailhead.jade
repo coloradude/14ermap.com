@@ -26,7 +26,10 @@ h1 #{trailhead.name}
     -routeClass='class-5'
     -} else { routeClass='routeClass-1'}
     button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass) #{route.name} &bull; #{route.difficulty} 
-      span.glyphicon.glyphicon-star
+      if route.isStandard
+        span.glyphicon.glyphicon-star
+      if route.isSnowOnly
+        i.owf.owf-903.owf-lg.white-icon
   h2 Peaks
   .sexy-line
   each peak in peaks

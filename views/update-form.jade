@@ -1,0 +1,12 @@
+.update-form-wrapper
+  form.submit-update(id=id)
+    input#name(name='name' placeholder='Name')
+    input#type(name='type' placeholder='Type')
+    input#_id(name='_id' placeholder='Mongo _id')
+    input#thumbnail(name='thumbnail' placeholder='Thumbnail URL')
+    label Standard Route?
+      input#isStandard(type='checkbox' name='isStandard') 
+    label Snow Only?
+      input#isSnowOnly(type='checkbox' name='isSnowOnly')
+    input#more-images(name='images' placeholder='images')
+  button.btn.btn-warning.submit-update-submit Submit

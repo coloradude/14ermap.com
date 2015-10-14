@@ -2,8 +2,40 @@
   font-family: 'Roboto', open-sans;
 }
 
-h1, h2, h3, h4, h5, h6, p, span, div {
+/*h1, h2, h3, h4, h5, h6, p, span {
   color: #fff;
+}*/
+
+.update-form-wrapper {
+  text-align: center;
+}
+
+.update-form-wrapper input[type='checkbox'] {
+  display: inline;
+}
+
+.update-form-wrapper button {
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 40px;
+  display: block;
+}
+
+.update-form-wrapper input {
+  margin: 0px auto;
+  width: 80%;
+  border-radius: 3px;
+  border: none;
+  margin-top: 20px;
+  height: 40px;
+  display: block;
+  color: black;
+}
+
+.update-form-wrapper label {
+  display: block;
+  width: 80%;
+  margin: 0px auto;
 }
 
 body {
@@ -41,6 +73,7 @@ html {
   background-color: #2D3140;
   padding-left: 0px;
   padding-right: 0px;
+  color: #fff;
 }
 
 .header {
@@ -258,7 +291,6 @@ width: 49%;}
 }
 
 .owf {
-  margin-top: 10px;
   font-size: 7em;
   color: #404040;
 }
@@ -272,4 +304,17 @@ i > p {
 
 .well p{
   color: #404040;
+}
+
+.white-icon {
+  color: white;
+  font-size: 1.3em;
+}
+
+.weather i {
+  margin-top: 10px;
+}
+
+#map {
+  color: !important black;
 }

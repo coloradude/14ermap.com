@@ -6,6 +6,7 @@
   h3 - #{peak.range} Range -
   .well.well-lg
     p #{peak.description}
+    p #{peak.location}
   .button-flex-row
     button.btn.btn-success.download More Images 
       span.glyphicon.glyphicon-picture
@@ -37,9 +38,11 @@
     -} else if (route.difficulty.toLowerCase().indexOf('class 5') > -1){
     -routeClass='class-5'
     -} else { routeClass='routeClass-1'}
-    -if (route.isStandard) { starGlyphicon = 'glyphicon glyphicon-star'}
     button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass) #{route.name} &bull; #{route.difficulty} 
-      span(class=starGlyphicon)
+      if route.isStandard
+        span.glyphicon.glyphicon-star
+      if route.isSnowOnly
+        i.owf.owf-903.owf-lg.white-icon
   h2 Trailheads
   .sexy-line 
   each trailhead in trailheads
@@ -54,5 +57,6 @@
     .panel.panel-primary
       .panel-heading.text-left #{report.route} (#{report.user}) &bull; #{diffDays} days ago
       .panel-body.text-left #{report.report}
+
       
         
