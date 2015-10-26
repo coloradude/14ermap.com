@@ -20,7 +20,7 @@
       p #{days[dayOfWeek]}
       - dayOfWeek++
       p #{day.weather[0].description}
-      p wind: #{Math.round(day.wind.speed * 2.23694)} mph
+      p wind: #{Math.round(day.wind.speed * 10)} mph
       p temp: #{Math.round(day.main.temp * (9/5) - 459.67)}
   
 .content
@@ -38,11 +38,14 @@
     -} else if (route.difficulty.toLowerCase().indexOf('class 5') > -1){
     -routeClass='class-5'
     -} else { routeClass='routeClass-1'}
-    button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass) #{route.name} &bull; #{route.difficulty} 
       if route.isStandard
-        span.glyphicon.glyphicon-star
-      if route.isSnowOnly
-        i.owf.owf-903.owf-lg.white-icon
+        button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass data-toggle='tooltip' title='Standard Route') #{route.name} &bull; #{route.difficulty} 
+          span.glyphicon.glyphicon-star
+      else if route.isSnowOnly
+        button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass data-toggle='tooltip' title='Snow Only') #{route.name} &bull; #{route.difficulty} 
+          i.owf.owf-903.owf-lg.white-icon(data-toggle='tooltip' data-placement='top' title='Snow Only')
+      else
+        button.btn.btn-primary.btn-block.feature-link(value='/route/' + route._id class=routeClass) #{route.name} &bull; #{route.difficulty} 
   h2 Trailheads
   .sexy-line 
   each trailhead in trailheads
@@ -58,5 +61,6 @@
       .panel-heading.text-left #{report.route} (#{report.user}) &bull; #{diffDays} days ago
       .panel-body.text-left #{report.report}
 
+  button.btn.btn-warning.btn-block.edit-peak(id=peak._id) Edit this peak
       
         

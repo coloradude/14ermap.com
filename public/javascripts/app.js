@@ -1,35 +1,72 @@
 
 var $infoPane = $('#info-pane')
 var $weather = $('#weather')
+var geojson = {
+  type : 'FeatureCollection',
+  features : [] 
+}
 
-var geojsonA;
+
+
 $.ajax({
   method: 'GET',
   url: '/geojson'
-}).done(function(res){
-  console.log(res.geojson)
-
-  geojsonA = res.geojson;
-  myLayer.setGeoJSON(geojsonA);
-
-  myLayer.on('mouseover', function(e) {
-      e.layer.bindPopup(e.layer.feature.properties.name)
-      e.layer.openPopup();
-  });
-  myLayer.on('mouseout', function(e) {
-      e.layer.closePopup();
-  });
-
+}).done(function(features){
+  getSortTable()
+  geojson.features = features;
+  myLayer.setGeoJSON(geojson);
+  setHoverForFeatureNames()
   myLayer.on('click', function(e){
+    console.log(e.layer.feature)
     map.setView(e.latlng)
     $infoPane.toggleClass('slideInLeft');
     var geoId = e.layer.feature.id
-    $('.edit-feature').on('click', function(){
+    loadEditRoute(geoId)
+    $.ajax({
+      method: 'POST',
+      url: '/' + e.layer.feature.properties.type + '/' + e.layer.feature._id, 
+      data: JSON.stringify(e.layer.feature.data),
+      contentType: "application/json; charset=utf-8"
+    }).done(function(data){
+      $infoPane.html(data).addClass('slideInLeft');
+      loadAJAX();
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip({container: 'body', placement: 'right'})
+      })
+    })
+  })
+})
+
+L.mapbox.accessToken ='pk.eyJ1IjoiY29sb3JhZHVkZSIsImEiOiJjaWY2NnN5MjAwYjVxc21rdTdzdWQwd2NtIn0.4_IhtN06SX3K3moZ1da-cg';
+
+var map = L.mapbox.map('map', 'mapbox.streets')
+  .setView([38.638, -107.391], 7);
+
+var myLayer = L.mapbox.featureLayer().addTo(map);
+
+function loadAJAX(){
+  $('.feature-link').off('click').on('click', function(){
+    $(this).tooltip('hide')
+    $infoPane.toggleClass('slideInLeft')
+    $.ajax({
+      method: 'GET',
+      url: $(this).val(),
+    }).done(function(html){
+      $('#info-pane').html(html).addClass('slideInLeft')
+      loadAJAX();
+    })
+  })
+}
+
+function loadEditRoute(geoId){
+  $('.edit-feature').on('click', function(){
+    console.log(geoId)
       $.ajax({
         url: '/update-feature/' + geoId,
         method: 'GET'
       }).done(function(html){
         $infoPane.html(html)
+        loadRemoveFeature()
         $('.submit-update-submit').on('click', function(e){
           e.preventDefault()
           $.ajax({
@@ -51,38 +88,100 @@ $.ajax({
         })
       })
     })
+}
+
+$(document).ready(function(){
+  $('.close-it').on('click', function(){
+    $infoPane.toggleClass('slideOutLeft')
     $.ajax({
       method: 'GET',
-      url: '/' + e.layer.feature.properties.type + '/' + e.layer.feature.properties._id,
-    }).done(function(data){
-      $infoPane.html(data).addClass('slideInLeft');
-      loadAJAX();
+      url: '/sort'
+    }).done(function(html){
+      $infoPane.html(html).toggleClass('slideOutLeft').addClass('slideInLeft')
+      loadFilters()
+      loadSearch()
+    })
+  })
+  $('.add-feature').on('click', function(){
+    $.ajax({
+      method: 'GET',
+      url: '/add-feature'
+    }).done(function(html){
+      $infoPane.html(html)
     })
   })
 })
 
-L.mapbox.accessToken ='pk.eyJ1IjoiY29sb3JhZHVkZSIsImEiOiJjaWY2NnN5MjAwYjVxc21rdTdzdWQwd2NtIn0.4_IhtN06SX3K3moZ1da-cg';
+function loadFilters(){
+  $('#peak-range').on('change', function(e){
+    var range = $(this).val()
+    myLayer.setFilter(function(f){
+      console.log(f)
+      if (range === 'Mosquito' && f.properties.type === 'peak'){
+        return f.data.range === 'Tenmile' || f.data.range === 'Mosquito'
+      }
+      if (f.data.range){
+        return f.data.range.toLowerCase() === range.toLowerCase() && f.properties.type === 'peak'
+      }
+    });
+    return false;
+  })
+}
 
-var map = L.mapbox.map('map', 'mapbox.streets')
-  .setView([38.638, -107.391], 7);
+function getSortTable(){
+  $.ajax({
+    method: 'GET',
+    url: '/sort'
+  }).done(function(html){
+    $infoPane.html(html)
+    loadFilters()
+    loadSearch()
+  })
+}
 
-var myLayer = L.mapbox.featureLayer().addTo(map);
-
-
-
-function loadAJAX(){
-  $('.feature-link').off('click').on('click', function(){
-    $infoPane.toggleClass('slideInLeft')
-    $.ajax({
-      method: 'GET',
-      url: $(this).val(),
-    }).done(function(html){
-      $('#info-pane').html(html).addClass('slideInLeft')
-      loadAJAX();
+function loadSearch(){
+  $('.search-bar input').on('keyup', function(){
+    var search = $(this).val().toLowerCase().replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"")
+    myLayer.setFilter(function(f){
+      if (f.data.range && f.properties.type && f.data.name){
+        return  f.data.range.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'').toLowerCase().indexOf(search) > -1 ||
+                f.data.name.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'').toLowerCase().indexOf(search) > -1 ||
+                f.properties.type.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'').toLowerCase().indexOf(search) > -1
+      }
     })
   })
 }
 
+function loadRemoveFeature(){
+  $('.remove-feature').on('click', function(){
+    if (window.confirm('Are you sure? This cannot be undone!')){
+      $.ajax({
+        method: 'POST',
+        url: '/delete/' + $('.type').val() + '/' + $('.submit-update').attr('id')
+      })
+    }
+  })
+}
+
+function setHoverForFeatureNames(){
+  myLayer.on('mouseover', function(e) {
+      e.layer.bindPopup(e.layer.feature.properties.name)
+      e.layer.openPopup();
+  });
+  myLayer.on('mouseout', function(e) {
+      e.layer.closePopup();
+  });
+}
+
+
+
+// function loadEditFeatureDataPath(){
+//   $('.edit-feature').on('click', function(){
+//     $.ajax({
+//       method: 'GET'
+//     })
+//   })
+// }
 
 
 

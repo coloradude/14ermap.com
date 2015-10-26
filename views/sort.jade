@@ -1,2 +1,38 @@
-select
-  option
+.content
+  .search-bar.input-group
+    input.form-control(placeholder='Search' aria-describedby='search' type='search')
+    span.glyphicon.glyphicon-search.input-group-addon(id='search')
+  h2 Sort Peaks
+  .sexy-line  
+  select.form-control#peak-range
+    option(value='' disabled selected) Sort By Mountain Range
+    option(value='Sawatch') Sawatch
+    option(value='Mosquito') Mosquito/Tenmile
+    option(value='Front') Front
+    option(value='San juan') San Juan
+    option(value='Sangre de cristo') Sangre de Cristo
+    option(value='Elk') Elk
+
+  h2 Sort Routes
+  .sexy-line
+  select.form-control#route-range
+    option(value='' disabled selected) Sort By Mountain Range
+    option Sawatch
+    option Mosquito/Tenmile
+    option Front
+    option San Juan
+    option Sangre de Cristo
+    option Elk
+  select.form-control#route-length
+    option(value='' disabled selected) Sort By Length
+    option Short < 6 miles
+    option Medium 6-12 miles
+    option Long 12-15 miles
+    option Practically a fucking marathon > 15 miles
+  select.form-control#route-difficulty
+    option(value='' disabled selected) Sort By Difficulty
+    option Class 1
+    option Class 2
+    option Class 3
+    option Class 4
+    option Class 5
