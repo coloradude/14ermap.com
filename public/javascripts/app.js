@@ -17,7 +17,7 @@ $.ajax({
   myLayer.setGeoJSON(geojson);
   setHoverForFeatureNames()
   myLayer.on('click', function(e){
-    console.log(e.layer.feature)
+    console.log('trying to get feature')
     map.setView(e.latlng)
     $infoPane.toggleClass('slideInLeft');
     var geoId = e.layer.feature.id
