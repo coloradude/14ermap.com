@@ -36,7 +36,7 @@ $.ajax({
 L.mapbox.accessToken ='pk.eyJ1IjoiY29sb3JhZHVkZSIsImEiOiJjaWY2NnN5MjAwYjVxc21rdTdzdWQwd2NtIn0.4_IhtN06SX3K3moZ1da-cg';
 
 var map = L.mapbox.map('map', 'mapbox.streets')
-  .setView([38.638, -107.391], 7);
+  .setView([38.795, -106.611], 8);
 
 var myLayer = L.mapbox.featureLayer().addTo(map);
 
