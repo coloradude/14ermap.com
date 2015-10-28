@@ -17,7 +17,6 @@ $.ajax({
   myLayer.setGeoJSON(geojson);
   setHoverForFeatureNames()
   myLayer.on('click', function(e){
-    console.log('trying to get feature')
     map.setView(e.latlng)
     $infoPane.toggleClass('slideInLeft');
     var geoId = e.layer.feature.id
@@ -26,7 +25,6 @@ $.ajax({
       method: 'GET',
       url: '/' + e.layer.feature.properties.type + '/' + e.layer.feature._id, 
     }).done(function(data){
-      console.log(data)
       $infoPane.html(data).addClass('slideInLeft');
       loadAJAX();
       loadEditFeatureDataPath()
