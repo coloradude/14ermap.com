@@ -1,15 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var db = require('monk')(process.env.MONGOLAB_URI || "mongodb://localhost/fourteeners");
-var peaks = db.get('peaks');
-var routes = db.get('routes')
-var trailheads = db.get('trailheads')
+//var peaks = db.get('peaks');
+// var routes = db.get('routes')
+// var trailheads = db.get('trailheads')
 var geoJSON = db.get('geoJSON')
 var geoIndividual = db.get('geojson-individual')
 var geoAggregate = db.get('geo-aggregate')
 var geoAggregatePeaks = db.get('geo-aggregate-peaks')
 var fs = require('fs')
 var rp = require('request-promise')
+var features = require('../lib/features.js')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -20,53 +21,40 @@ router.get('/sort', function(req, res){
   res.render('sort')
 })
 
-router.post('/peak/:id', function(req, res){
-  console.log('got it')
-  Promise.all([
-    routes.find({peakKeys: req.body.pkKey}),
-    trailheads.find({pkKeys: req.body.pkKey}),
-    rp('http://api.openweathermap.org/data/2.5/forecast?lat=' + req.body.latitutde + '&lon=' + req.body.longitude + '&cnt=5&APPID=9168266ea473f720024dc6501a3dec27')
-  ]).then(function(results){
-    res.render('peak', {
-      peak: req.body, 
-      routes: results[0], 
-      trailheads: results[1], 
-      weather: JSON.parse(results[2]).list
-    })
+router.get('/peak/:_id', function(req, res){
+  features.getPeak(req.params._id)
+    .then(function(data){
+      res.render('peak', {
+        peak: data.peak, 
+        routes: data.routes, 
+        trailheads: data.trailheads, 
+        weather: data.weather
+      }
+    )
   })
 })
 
-router.get('/trailhead/:id', function(req, res){
-  trailheads.findOne({_id: req.params.id}).then(function(trailhead){
-    return Promise.all([
-      routes.find({trailheadKey: trailhead.thKey}),
-      peaks.find({pkKey: {$in: trailhead.pkKeys}})
-    ]).then(function(results){
-      return [trailhead, results[0], results[1]]
-    })
-  }).then(function(data){
-    res.render('trailhead', {
-      trailhead: data[0], 
-      routes: data[1], 
-      peaks: data[2]
-    })
+router.get('/trailhead/:_id', function(req, res){
+  features.getTrailhead(req.params._id)
+    .then(function(data){
+      res.render('trailhead', {
+        trailhead: data.trailhead, 
+        routes: data.routes, 
+        peaks: data.peaks
+      }
+    )
   })
 })
 
-router.get('/route/:id', function(req, res){
-  routes.findOne({_id: req.params.id}).then(function(route){
-    return Promise.all([
-      trailheads.find({thKey: route.trailheadKey}),
-      peaks.find({pkKey: { $all: route.peakKeys }})
-    ]).then(function(result){
-      return [route, result[0][0], result[1]]
-    })
-  }).then(function(data){
-    res.render('route', { 
-      route: data[0], 
-      trailhead: data[1], 
-      peaks: data[2] 
-    })
+router.get('/route/:_id', function(req, res){
+  features.getRoute(req.params._id)
+    .then(function(data){
+      res.render('route', { 
+        route: data.route, 
+        trailhead: data.trailhead, 
+        peaks: data.peaks 
+      }
+    )
   })
 })
 
@@ -205,6 +193,12 @@ router.post('/delete/:type/:id', function(req, res){
   } else if (req.params.type === 'route'){
     routes.remove({_id: req.params.id})
   }
+})
+
+router.get('/update-peak-conditions/:id', function(req, res){
+  peaks.findById(req.params.id).then(function(peak){
+    res.render('update-peak-conditions-modal', {id: req.params.id, name: peak.name})
+  })
 })
 
 //router.get('something', function(req, res){

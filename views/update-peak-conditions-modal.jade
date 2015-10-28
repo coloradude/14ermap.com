@@ -1,0 +1,14 @@
+.modal.fade
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button' data-dismiss='modal' aria-label='Close')
+          span(aria-hidden='true') ×
+        h4.modal-title #{name} Conditions
+      .modal-body
+        |Date: 
+        input(type="text" id="datepicker" size="30")
+        textarea#update-conditions(placeholder='Update us on the latest conditions on ' + name)
+      .modal-footer
+        button.btn.btn-default(type='button' data-dismiss='modal') Close
+        button.btn.btn-primary(type='button' id=id) Save changes

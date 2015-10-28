@@ -23,16 +23,14 @@ $.ajax({
     var geoId = e.layer.feature.id
     loadEditRoute(geoId)
     $.ajax({
-      method: 'POST',
+      method: 'GET',
       url: '/' + e.layer.feature.properties.type + '/' + e.layer.feature._id, 
-      data: JSON.stringify(e.layer.feature.data),
-      contentType: "application/json; charset=utf-8"
     }).done(function(data){
+      console.log(data)
       $infoPane.html(data).addClass('slideInLeft');
       loadAJAX();
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip({container: 'body', placement: 'right'})
-      })
+      loadEditFeatureDataPath()
+      loadTooltips()
     })
   })
 })
@@ -46,7 +44,9 @@ var myLayer = L.mapbox.featureLayer().addTo(map);
 
 function loadAJAX(){
   $('.feature-link').off('click').on('click', function(){
-    $(this).tooltip('hide')
+    if ($(this).attr('data-toggle')){
+      //$(this).tooltip('hide')
+    }
     $infoPane.toggleClass('slideInLeft')
     $.ajax({
       method: 'GET',
@@ -54,6 +54,7 @@ function loadAJAX(){
     }).done(function(html){
       $('#info-pane').html(html).addClass('slideInLeft')
       loadAJAX();
+      loadTooltips();
     })
   })
 }
@@ -145,8 +146,7 @@ function loadSearch(){
     myLayer.setFilter(function(f){
       if (f.data.range && f.properties.type && f.data.name){
         return  f.data.range.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'').toLowerCase().indexOf(search) > -1 ||
-                f.data.name.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'').toLowerCase().indexOf(search) > -1 ||
-                f.properties.type.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'').toLowerCase().indexOf(search) > -1
+                f.data.name.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'').toLowerCase().indexOf(search) > -1 
       }
     })
   })
@@ -175,16 +175,30 @@ function setHoverForFeatureNames(){
 
 
 
-// function loadEditFeatureDataPath(){
-//   $('.edit-feature').on('click', function(){
-//     $.ajax({
-//       method: 'GET'
-//     })
-//   })
-// }
+function loadEditFeatureDataPath(){
+  $('.update-peak-conditions').on('click', function(){
+    $.ajax({
+      method: 'GET',
+      url: '/update-peak-conditions/' + $(this).attr('id')
+    }).done(function(modal){
+      $('body').append(modal)
+      $('.modal').modal('show')
+      $( "#datepicker" ).datepicker().on('keyup keydown', function(e){
+        e.preventDefault()
+      });
+      $( "#datepicker" ).datepicker( "option", "dateFormat", 'yy-mm-dd');
+      $('#datepicker').addClass('ll-skin-nigran')
+      $('.modal').on('hide.bs.modal', function(){
+        $(this).remove()
+      })
 
+    })
+  })
+}
 
-
+function loadTooltips(){
+  $('[data-toggle="tooltip"]').tooltip({container: 'body', placement: 'right'})
+}
 
 
 

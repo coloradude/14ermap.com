@@ -4,4 +4,12 @@
       input.form-control(placeholder='Feature Name' name='name')
       input.form-control(placeholder='Trailhead Key (random numbers and letters)' name='thKey')
       select.form-control(name='peakKey' multiple)
-        
+        each peak in peaks
+          option(value='peak.pkKey') #{peak.name}
+      textarea.form-control(placeholder='Directions' name='directions')
+      input.form-control(placeholder='Road Info' name='roadInfo')
+      input.form-control(type='checkbox' name='winterAccess')
+        |Winter Access?
+      input.form-control(placeholder='Road difficulty (1-6)')
+      input.form-control(placeholder='Latitude' name='latitude')
+      input.form-control(placeholder='Longitude' name='longitude')
